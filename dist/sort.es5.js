@@ -12,13 +12,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 // >>> SORTERS <<<
 
+/**
+ * Creating an instance of an Intl.Collator or a polyfill
+**/
+let collatorCompare;
+if (typeof Intl === 'object' && Intl.Collator) {
+  collatorCompare = Intl.Collator().compare;
+} else {
+  collatorCompare = (a, b) => {
+    if (a === b) return 0;
+    if (a < b) return 1;
+    if (a == null) return 1;
+    if (b == null) return -1;
+    return direction;
+  };
+}
+
 var sorter = function sorter(direction, a, b) {
   if (a === b) return 0;
-  if (a < b) return -direction;
-  if (a == null) return 1;
-  if (b == null) return -1;
-
-  return direction;
+  if (a == null && b != null) return 1;
+  if (b == null && a != null) return -1;
+  return collatorCompare(a, b) * direction;
 };
 
 /**
